@@ -1,6 +1,5 @@
 import main
-from collections import Counter
-
+a
 
 def resource_allocation(group):
     """
@@ -13,22 +12,33 @@ def resource_allocation(group):
 
     # Splitting up genotypes
     if group[0]:
-        selfish_large = [x for x in group_elements if isinstance(x, main.SelfishIndividual) and x.group_size]
-        cooperative_large = [x for x in group_elements if isinstance(x, main.CooperativeIndividual) and x.group_size]
-        total_number = selfish_large + cooperative_large
+        # Large genotype
+        selfish = [x for x in group_elements if isinstance(x, main.SelfishIndividual) and x.group_size]
+        cooperative = [x for x in group_elements if isinstance(x, main.CooperativeIndividual) and x.group_size]
     else:
-        selfish_small = [x for x in group_elements if isinstance(x, main.SelfishIndividual) and not x.group_size]
-        cooperative_small = [x for x in group_elements if isinstance(x, main.CooperativeIndividual) and not x.group_size]
-        total_number = selfish_small + cooperative_small
+        selfish = [x for x in group_elements if isinstance(x, main.SelfishIndividual) and not x.group_size]
+        cooperative = [x for x in group_elements if isinstance(x, main.CooperativeIndividual) and not
+                             x.group_size]
 
+    # KEEP AS FLOAT????
 
-    # print(len(group), selfish_small)
+    selfish_number = float(len(selfish))
+    cooperative_number = float(len(cooperative))
 
+    # Top line of equation == number_in_group * growth_rate * consumption_rate
+    selfish_top_line = selfish_number * main.SELFISH_GROWTH * main.SELFISH_CONSUMPTION
+    cooperative_top_line = cooperative_number * main.COOPERATIVE_GROWTH * main.COOPERATIVE_CONSUMPTION
 
+    # Bottom line of equation == sum of all top lines
+    bottom_line = selfish_top_line + cooperative_top_line
 
-    return total_number, len(group_elements)
-    # Splitting the genotypes
+    total_resources = resource_influx_calculation(group)
 
+    # Calculating the share for each genotype
+    selfish_share = (selfish_top_line / bottom_line) * total_resources
+    cooperative_share = (cooperative_top_line / bottom_line) * total_resources
+
+    return selfish_share, cooperative_share
 
 
 def resource_influx_calculation(group):
