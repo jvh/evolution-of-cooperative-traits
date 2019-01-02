@@ -1,9 +1,10 @@
 import main
-a
+import formation
 
-def resource_allocation(group):
+
+def split_group_into_genotype(group):
     """
-    Calculates the magnitude of the resources which a genotype receives in a group
+    Splits a given group into subgroups of the constituent genotypes
 
     :param ([Individual]) group: The group containing the genotypes
     :return:
@@ -19,6 +20,19 @@ def resource_allocation(group):
         selfish = [x for x in group_elements if isinstance(x, main.SelfishIndividual) and not x.group_size]
         cooperative = [x for x in group_elements if isinstance(x, main.CooperativeIndividual) and not
                              x.group_size]
+
+    return selfish, cooperative
+
+
+def resource_allocation(group, selfish, cooperative):
+    """
+    Calculates the magnitude of the resources which a genotype receives in a group
+
+    :param ([Individual]) group: The group containing the genotypes
+    :param ([SelfishIndividual]) selfish: The selfish subgroup in a group
+    :param ([CooperativeIndividual]) cooperative: The cooperative subgroup in a group
+    :return:
+    """
 
     # KEEP AS FLOAT????
 
@@ -57,3 +71,34 @@ def resource_influx_calculation(group):
         # If above base, we need to work out the additional resources, with SMALL_GROUP_SIZE*2 requiring 5% extra
         additional_resources = (group_size/(main.RESOURCE_INFLUX_BASE * 2) * 0.05)
         return group_size * (1 + additional_resources)
+
+
+def replicator_equation(group):
+    """
+    Replication equation which defines how groups replicate within
+
+
+    :return:
+    """
+    # Splitting the group into its constituent genotypes
+    selfish, cooperative = split_group_into_genotype(group)
+    # Working out the resource allocations for each genotype in the group
+    selfish_allocation, cooperative_allocation = resource_allocation(group, selfish, cooperative)
+    # Number of individuals in each genotype
+    number_selfish, number_cooperative = float(len(selfish)), float(len(cooperative))
+
+    # Calculating the new number of both selfish and cooperative genotypes in the group
+    selfish_replication = number_selfish + (selfish_allocation / main.SELFISH_CONSUMPTION) - \
+                       (main.DEATH_RATE * number_selfish)
+
+    cooperative_replication = number_cooperative + (cooperative_allocation / main.COOPERATIVE_CONSUMPTION) - \
+                       (main.DEATH_RATE * number_cooperative)
+
+    if group[0]:
+        group[1] = [formation.INDIVIDUALS_DICT[0] * selfish_replication] + \
+                   [formation.INDIVIDUALS_DICT[2] * cooperative_replication]
+    else:
+        group[1] = [formation.INDIVIDUALS_DICT[1] * selfish_replication] + \
+                   [formation.INDIVIDUALS_DICT[3] * cooperative_replication]
+
+
