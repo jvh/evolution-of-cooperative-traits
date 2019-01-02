@@ -3,9 +3,11 @@ import algorithm
 from random import shuffle
 
 # Specifies the size of the population
+import helper
+
 POPULATION_SIZE = 4000
 # Number of generations, T, to take place in the simulation
-NUMBER_OF_GENERATIONS = 1000
+NUMBER_OF_GENERATIONS = 120
 # Defines the mortality rate for all genotypes
 DEATH_RATE = 0.1
 # Defines the growth rate for both cooperative and selfish genotypes
@@ -20,6 +22,11 @@ SMALL_GROUP_SIZE = 4
 GROUP_SIZE_DICT = {True: 'large', False: 'small'}
 # Base resource influx is equal for a small group is equal to SMALL_GROUP_SIZE
 RESOURCE_INFLUX_BASE = SMALL_GROUP_SIZE
+# The t time-steps that reproduction takes places
+REPRODUCTION_TIME_STEPS = 4
+
+# The current generation
+generation_number = 0
 
 
 class Individual:
@@ -73,14 +80,34 @@ class CooperativeIndividual(Individual):
 
 if __name__ == '__main__':
     population = formation.form_set_population()
-    # Randomly shuffling population
-    shuffle(population)
-    groups = formation.form_groups(population)
+    print("# GENERATION 0 #")
+    helper.print_genotype_distribution(population)
 
-    number_of_selfish = 0
-    for group in groups:
-        # print(algorithm.resource_influx_calculation(group))
-        print(algorithm.resource_allocation(group))
+    for i in range(1, NUMBER_OF_GENERATIONS):
+        # Randomly shuffling population
+        shuffle(population)
+        groups = formation.form_groups(population)
+
+        population = []
+
+        for group in groups:
+            for y in range(REPRODUCTION_TIME_STEPS):
+                algorithm.replicator_equation(group)
+            population += group[1]
+
+        genotype_distribution = helper.determine_genotype_distribution(population)
+        print("# GENERATION {} #".format(i))
+        helper.rescale_population(population, genotype_distribution)
+
+
+
+
+    # print(len(population))
+    # # print(population)
+
+
+    print(i)
+
     # print(len(groups))
     #
     # print(number_of_selfish)

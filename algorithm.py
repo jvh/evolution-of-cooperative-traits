@@ -1,27 +1,6 @@
 import main
 import formation
-
-
-def split_group_into_genotype(group):
-    """
-    Splits a given group into subgroups of the constituent genotypes
-
-    :param ([Individual]) group: The group containing the genotypes
-    :return:
-    """
-    group_elements = group[1]
-
-    # Splitting up genotypes
-    if group[0]:
-        # Large genotype
-        selfish = [x for x in group_elements if isinstance(x, main.SelfishIndividual) and x.group_size]
-        cooperative = [x for x in group_elements if isinstance(x, main.CooperativeIndividual) and x.group_size]
-    else:
-        selfish = [x for x in group_elements if isinstance(x, main.SelfishIndividual) and not x.group_size]
-        cooperative = [x for x in group_elements if isinstance(x, main.CooperativeIndividual) and not
-                       x.group_size]
-
-    return selfish, cooperative
+from helper import split_group_into_genotype
 
 
 def resource_allocation(group, selfish, cooperative):
@@ -88,56 +67,18 @@ def replicator_equation(group):
     number_selfish, number_cooperative = len(selfish), len(cooperative)
 
     # Calculating the new number of both selfish and cooperative genotypes in the group
-    selfish_replication = int(number_selfish + (selfish_allocation / main.SELFISH_CONSUMPTION) - \
-        (main.DEATH_RATE * number_selfish))
+    selfish_replication = int(number_selfish + (selfish_allocation / main.SELFISH_CONSUMPTION) -
+                              (main.DEATH_RATE * number_selfish))
 
-    cooperative_replication = int(number_cooperative + (cooperative_allocation / main.COOPERATIVE_CONSUMPTION) - \
-        (main.DEATH_RATE * number_cooperative))
+    cooperative_replication = int(number_cooperative + (cooperative_allocation / main.COOPERATIVE_CONSUMPTION) -
+                                  (main.DEATH_RATE * number_cooperative))
 
     # Reforming the group based on the replications
     if group[0]:
-        group[1] = [formation.INDIVIDUALS_DICT[0]] * selfish_replication + \
-                   [formation.INDIVIDUALS_DICT[2]] * cooperative_replication
-    else:
         group[1] = [formation.INDIVIDUALS_DICT[1]] * selfish_replication + \
                    [formation.INDIVIDUALS_DICT[3]] * cooperative_replication
+    else:
+        group[1] = [formation.INDIVIDUALS_DICT[0]] * selfish_replication + \
+                   [formation.INDIVIDUALS_DICT[2]] * cooperative_replication
 
 
-def determine_genotype_ratio(population):
-    small_selfish = large_selfish = small_cooperative = large_cooperative = 0
-
-    for individual in population:
-        group_size = individual.group_size
-        cooperative = isinstance(individual, main.CooperativeIndividual)
-
-        if cooperative:
-            if group_size:
-                large_cooperative += 1
-            else:
-                small_cooperative += 1
-        else:
-            if group_size:
-                large_selfish += 1
-            else:
-                small_selfish += 1
-
-    total_size = small_selfish + small_cooperative + large_selfish + large_cooperative
-
-    small_selfish_ratio = (small_selfish / total_size) * 100
-    large_selfish_ratio = (large_selfish / total_size) * 100
-    small_cooperative_ratio = (small_cooperative / total_size) * 100
-    large_cooperative_ratio = (large_cooperative / total_size) * 100
-
-    return (small_selfish, small_selfish_ratio, large_selfish, large_selfish_ratio, small_cooperative,
-            small_cooperative_ratio, large_cooperative, large_cooperative_ratio)
-
-
-def print_genotype_ratio(population):
-    values = determine_genotype_ratio(population)
-
-    print("Small selfish: {ss}, with ratio {ssr}%\n"
-          "Large selfish: {ls}, with ratio {lsr}%\n"
-          "Small cooperative: {sc}, with ratio {scr}%\n"
-          "Large cooperative: {lc}, with ratio {lcr}%".
-          format(ss=values[0], ssr=values[1], ls=values[2], lsr=values[3], sc=values[4], scr=values[5], lc=values[6],
-                 lcr=values[7]))
