@@ -1,5 +1,6 @@
 import formation
 import algorithm
+from random import shuffle
 
 # Specifies the size of the population
 POPULATION_SIZE = 4000
@@ -72,7 +73,14 @@ class CooperativeIndividual(Individual):
 
 if __name__ == '__main__':
     population = formation.form_set_population()
+    # Randomly shuffling population
+    shuffle(population)
     groups = formation.form_groups(population)
+
+    number_of_selfish = 0
     for group in groups:
-        print(algorithm.resource_influx_calculation(group))
-    print(len(groups))
+        # print(algorithm.resource_influx_calculation(group))
+        print(algorithm.resource_allocation(group))
+    # print(len(groups))
+    #
+    # print(number_of_selfish)

@@ -75,12 +75,12 @@ def form_groups(population):
 
     # Forming small groups
     while len(small_pop) >= main.SMALL_GROUP_SIZE:
-        groups.append(small_pop[:main.SMALL_GROUP_SIZE])
+        # Appending a list with format [group_size, [group]]
+        groups.append([False, small_pop[:main.SMALL_GROUP_SIZE]])
         del small_pop[:main.SMALL_GROUP_SIZE]
 
     while len(large_pop) >= main.LARGE_GROUP_SIZE:
-        groups.append(large_pop[:main.LARGE_GROUP_SIZE])
+        groups.append([True, large_pop[:main.LARGE_GROUP_SIZE]])
         del large_pop[:main.LARGE_GROUP_SIZE]
-
 
     return groups
