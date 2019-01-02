@@ -79,7 +79,8 @@ def form_groups(population):
         del small_pop[:main.SMALL_GROUP_SIZE]
 
     while len(large_pop) >= main.LARGE_GROUP_SIZE:
-        groups.append(small_pop[:main.LARGE_GROUP_SIZE])
+        groups.append(large_pop[:main.LARGE_GROUP_SIZE])
         del large_pop[:main.LARGE_GROUP_SIZE]
+
 
     return groups

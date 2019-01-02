@@ -73,5 +73,6 @@ class CooperativeIndividual(Individual):
 if __name__ == '__main__':
     population = formation.form_set_population()
     groups = formation.form_groups(population)
-
+    for group in groups:
+        print(algorithm.resource_influx_calculation(group))
     print(len(groups))
