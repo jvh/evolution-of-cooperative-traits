@@ -1,5 +1,5 @@
 import formation
-
+import algorithm
 
 # Specifies the size of the population
 POPULATION_SIZE = 4000
@@ -16,6 +16,9 @@ SELFISH_CONSUMPTION = 0.2
 # Defining group sizes for large and small groups
 LARGE_GROUP_SIZE = 40
 SMALL_GROUP_SIZE = 4
+GROUP_SIZE_DICT = {True: 'large', False: 'small'}
+# Base resource influx is equal for a small group is equal to SMALL_GROUP_SIZE
+RESOURCE_INFLUX_BASE = SMALL_GROUP_SIZE
 
 
 class Individual:
@@ -38,7 +41,7 @@ class Individual:
         self.group_size = size
 
     def __str__(self):
-        size_dict = {True: 'large', False: 'small'}[self.group_size]
+        size_dict = GROUP_SIZE_DICT[self.group_size]
 
         if self.growth_rate == SELFISH_GROWTH:
             return "This is a SELFISH individual, with group size '{}'".format(size_dict)
@@ -67,8 +70,8 @@ class CooperativeIndividual(Individual):
         """
         super().__init__(COOPERATIVE_GROWTH, COOPERATIVE_CONSUMPTION, group_size)
 
-
 if __name__ == '__main__':
-    population = formation.form_population()
+    population = formation.form_set_population()
+    groups = formation.form_groups(population)
 
-    # pass
+    print(len(groups))
