@@ -28,85 +28,40 @@ REPRODUCTION_TIME_STEPS = 4
 # The current generation
 generation_number = 0
 
-
-class Individual:
-
-    growth_rate = None
-    consumption_rate = None
-    # Specifies the initial size of the group that the individual shall join
-    initial_group_size = None
-
-    def __init__(self, growth, consumption, size):
-        """
-        Creation of an individual in the population
-
-        :param (float) growth_rate: The rate of growth of the individual
-        :param (float) consumption_rate: The rate of consumption of the individual
-        :param (bool) group_size: Specifies the size of the group. True represents large, False represents small.
-        """
-        self.growth_rate = growth
-        self.consumption_rate = consumption
-        self.group_size = size
-
-    def __str__(self):
-        size_dict = GROUP_SIZE_DICT[self.group_size]
-
-        if self.growth_rate == SELFISH_GROWTH:
-            return "This is a SELFISH individual, with group size '{}'".format(size_dict)
-        else:
-            return "This is a COOPERATIVE individual, with group size '{}'".format(size_dict)
-
-
-class SelfishIndividual(Individual):
-
-    def __init__(self, group_size):
-        """
-        Creation of a selfish individual
-
-        :param (bool) group_size: The group size
-        """
-        super().__init__(SELFISH_GROWTH, SELFISH_CONSUMPTION, group_size)
-
-
-class CooperativeIndividual(Individual):
-
-    def __init__(self, group_size):
-        """
-        Creation of a cooperative individual
-
-        :param (bool) group_size: The group size
-        """
-        super().__init__(COOPERATIVE_GROWTH, COOPERATIVE_CONSUMPTION, group_size)
-
 if __name__ == '__main__':
     population = formation.form_set_population()
     print("# GENERATION 0 #")
-    helper.print_genotype_distribution(population)
+    helper.rescale_population(population)
 
-    for i in range(1, NUMBER_OF_GENERATIONS):
-        # Randomly shuffling population
-        shuffle(population)
+    for i in range(1, NUMBER_OF_GENERATIONS+1):
         groups = formation.form_groups(population)
-
-        population = []
 
         for group in groups:
             for y in range(REPRODUCTION_TIME_STEPS):
                 algorithm.replicator_equation(group)
-            population += group[1]
 
-        genotype_distribution = helper.determine_genotype_distribution(population)
+            # Returning progeny of group to population
+            if group[0]:
+                population['sl'] += group[1]
+                population['cl'] += group[2]
+            else:
+                population['ss'] += group[1]
+                population['cs'] += group[2]
+
         print("# GENERATION {} #".format(i))
-        helper.rescale_population(population, genotype_distribution)
+        helper.rescale_population(population)
 
+        # genotype_distribution = helper.determine_genotype_distribution(population)
+        #
 
-
-
-    # print(len(population))
-    # # print(population)
-
-
-    print(i)
+    #
+    #
+    #
+    # # print(len(population))
+    # # # print(population)
+    #
+    #
+    # print(i)
 
     # print(len(groups))
     #

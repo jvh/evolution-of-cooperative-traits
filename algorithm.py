@@ -1,9 +1,9 @@
 import main
 import formation
-from helper import split_group_into_genotype
+# from helper import split_group_into_genotype
 
 
-def resource_allocation(group, selfish, cooperative):
+def resource_allocation(group):
     """
     Calculates the magnitude of the resources which a genotype receives in a group
 
@@ -12,11 +12,7 @@ def resource_allocation(group, selfish, cooperative):
     :param ([CooperativeIndividual]) cooperative: The cooperative subgroup in a group
     :return:
     """
-
-    # KEEP AS FLOAT????
-
-    selfish_number = float(len(selfish))
-    cooperative_number = float(len(cooperative))
+    selfish_number, cooperative_number = group[1], group[2]
 
     # Top line of equation == number_in_group * growth_rate * consumption_rate
     selfish_top_line = selfish_number * main.SELFISH_GROWTH * main.SELFISH_CONSUMPTION
@@ -41,17 +37,18 @@ def resource_influx_calculation(group):
     :param ([Individual]) group: The group which we are calculating the resources for
     :return: (float) The resources available for that group
     """
-    group_elements = group[1]
-    group_size = len(group_elements)
+    # group_size = group[1] + group[2]
+    group_size = 40
 
-    if group_size == main.SMALL_GROUP_SIZE:
-        return main.RESOURCE_INFLUX_BASE
-    else:
+    if group[0]:
         # If above base, we need to work out the additional resources, with SMALL_GROUP_SIZE*2 requiring 5% extra
         additional_resources = (group_size/(main.RESOURCE_INFLUX_BASE * 2) * 0.05)
-        return group_size * (1 + additional_resources)
+        # return group_size * (1 + additional_resources)
+        return 50
+    else:
+        return main.RESOURCE_INFLUX_BASE
 
-
+#
 def replicator_equation(group):
     """
     Replication equation which defines how groups replicate within
@@ -59,12 +56,10 @@ def replicator_equation(group):
 
     :return:
     """
-    # Splitting the group into its constituent genotypes
-    selfish, cooperative = split_group_into_genotype(group)
+    number_selfish, number_cooperative = group[1], group[2]
+
     # Working out the resource allocations for each genotype in the group
-    selfish_allocation, cooperative_allocation = resource_allocation(group, selfish, cooperative)
-    # Number of individuals in each genotype
-    number_selfish, number_cooperative = len(selfish), len(cooperative)
+    selfish_allocation, cooperative_allocation = resource_allocation(group)
 
     # Calculating the new number of both selfish and cooperative genotypes in the group
     selfish_replication = int(number_selfish + (selfish_allocation / main.SELFISH_CONSUMPTION) -
@@ -73,12 +68,51 @@ def replicator_equation(group):
     cooperative_replication = int(number_cooperative + (cooperative_allocation / main.COOPERATIVE_CONSUMPTION) -
                                   (main.DEATH_RATE * number_cooperative))
 
-    # Reforming the group based on the replications
-    if group[0]:
-        group[1] = [formation.INDIVIDUALS_DICT[1]] * selfish_replication + \
-                   [formation.INDIVIDUALS_DICT[3]] * cooperative_replication
-    else:
-        group[1] = [formation.INDIVIDUALS_DICT[0]] * selfish_replication + \
-                   [formation.INDIVIDUALS_DICT[2]] * cooperative_replication
+    # Reforming group based on replications
+    group[1] = selfish_replication
+    group[2] = cooperative_replication
 
-
+# def replicator_equation(group):
+#     """
+#     Defines reproduction for a group
+#     :param group: group to undergo reproduction for t time steps
+#     :param small: Boolean - is the group small or large
+#     :return: The grown group after t reproduction cycles
+#     """
+#
+#     N = 4000
+#     T = 120
+#     K = 0.1
+#     Gc = 0.018
+#     Gs = 0.02
+#     Cc = 0.1
+#     Cs = 0.2
+#     t = 3
+#     Rl = 50
+#     Rs = 4
+#
+#     nc = group[2]
+#     ns = group[1]
+#
+#     # R is based on group size
+#     if not group[0]:
+#         R = 4
+#     else:
+#         R = 50
+#
+#     # Calculate share of the resource
+#     rc = ((nc * Gc * Cc) / ((nc * Gc * Cc) + (ns * Gs * Cs))) * R
+#     rs = ((ns * Gs * Cs) / ((nc * Gc * Cc) + (ns * Gs * Cs))) * R
+#
+#     # Calculate new group size
+#     new_nc = nc + (rc/Cc) - (K * nc)
+#     new_ns = ns + (rs/Cs) - (K * ns)
+#
+#     group[2] = nc * round(new_nc)
+#     group[1] = ns * round(new_ns)
+#     # group = group_nc + group_ns
+#
+#     return group
+#
+#
+#

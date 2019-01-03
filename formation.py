@@ -1,44 +1,5 @@
-import random
 import main
-
-# Dictionary of available genotypes
-INDIVIDUALS_DICT = {0: main.SelfishIndividual(False),
-                    1: main.SelfishIndividual(True),
-                    2: main.CooperativeIndividual(False),
-                    3: main.CooperativeIndividual(True)}
-
-
-def form_random_population():
-    """
-    Forms a random population of size POPULATION_SIZE
-
-    :return: ([Individual]) The population
-    # :return: ([SelfishIndividual]) The population of selfish individuals
-    # :return: ([CooperativeIndividual]) The population of cooperative individuals
-    """
-    population = []
-    ######### REMOVE?
-    selfish_population = []
-    cooperative_population = []
-
-    # Creation of POPULATION_SIZE individuals, with same chance of being cooperative/selfish and small/large group size
-    for i in range(main.POPULATION_SIZE):
-        # Generating random bools
-        group_size = bool(random.getrandbits(1))
-        cooperativeness = bool(random.getrandbits(1))
-
-        # False represents selfish
-        if cooperativeness:
-            ind = main.CooperativeIndividual(group_size)
-            population.append(ind)
-            cooperative_population.append(ind)
-        else:
-            ind = main.SelfishIndividual(group_size)
-            population.append(ind)
-            selfish_population.append(ind)
-
-    return population
-
+import random
 
 def form_set_population():
     """
@@ -50,7 +11,10 @@ def form_set_population():
     population = []
 
     for i in range(4):
-        population = population + ([INDIVIDUALS_DICT[i]] * int(main.POPULATION_SIZE / 4))
+        population = {'ss': (main.POPULATION_SIZE / 4),
+                      'sl': (main.POPULATION_SIZE / 4),
+                      'cs': (main.POPULATION_SIZE / 4),
+                      'cl': (main.POPULATION_SIZE / 4)}
 
     return population
 
@@ -63,24 +27,35 @@ def form_groups(population):
     :return: ([[]]) A list of groups
     """
     groups = []
-
-    # Segmenting population based on group size
-    small_pop = []
-    large_pop = []
-    for individual in population:
-        if individual.group_size:
-            large_pop.append(individual)
-        else:
-            small_pop.append(individual)
+    small_pop = population['ss'] + population['cs']
+    large_pop = population['sl'] + population['cl']
 
     # Forming small groups
-    while len(small_pop) >= main.SMALL_GROUP_SIZE:
-        # Appending a list with format [group_size, [group]]
-        groups.append([False, small_pop[:main.SMALL_GROUP_SIZE]])
-        del small_pop[:main.SMALL_GROUP_SIZE]
+    while small_pop >= main.SMALL_GROUP_SIZE:
+        while True:
+            rand_selfish = random.randint(0, main.SMALL_GROUP_SIZE)
+            rand_cooperative = main.SMALL_GROUP_SIZE - rand_selfish
+            if rand_selfish <= population['ss'] and rand_cooperative <= population['cs']:
+                break
 
-    while len(large_pop) >= main.LARGE_GROUP_SIZE:
-        groups.append([True, large_pop[:main.LARGE_GROUP_SIZE]])
-        del large_pop[:main.LARGE_GROUP_SIZE]
+        groups.append([False, float(rand_selfish), float(rand_cooperative)])
+        population['ss'] -= rand_selfish
+        population['cs'] -= rand_cooperative
+        small_pop -= main.SMALL_GROUP_SIZE
+
+    while large_pop >= main.LARGE_GROUP_SIZE:
+        while True:
+            rand_selfish = random.randint(0, main.LARGE_GROUP_SIZE)
+            rand_cooperative = main.LARGE_GROUP_SIZE - rand_selfish
+            if rand_selfish <= population['sl'] and rand_cooperative <= population['cl']:
+                break
+
+        groups.append([True, float(rand_selfish), float(rand_cooperative)])
+        population['sl'] -= rand_selfish
+        population['cl'] -= rand_cooperative
+        large_pop -= main.LARGE_GROUP_SIZE
+
+    # Dispose of any members who don't fit into group
+    population['ss'] = population['cs'] = population['sl'] = population['cl'] = 0
 
     return groups
