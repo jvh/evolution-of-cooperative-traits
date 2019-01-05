@@ -1,4 +1,9 @@
-from src import helper, algorithm, formation
+#################################################################################
+# File name: main.py                                                            #
+# Description: Main loop + constants                                            #
+#################################################################################
+
+from src import algorithm, population
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -24,34 +29,11 @@ REPRODUCTION_TIME_STEPS = 4
 columns = ['generation', 'ss', 'sl', 'cs', 'cl']
 data = pd.DataFrame(columns=columns)
 
-if __name__ == '__main__':
-    population = formation.form_set_population()
-    print("# GENERATION 0 #")
-    helper.print_genotype_distribution(population)
-    ssr, slr, csr, clr = helper.determine_genotype_distribution(population)
-    data = data.append({'generation': 0, 'ss': ssr, 'sl': slr, 'cs': csr, 'cl': clr}, ignore_index=True)
 
-    for i in range(1, NUMBER_OF_GENERATIONS+1):
-        groups = formation.form_groups(population)
-
-        for group in groups:
-            for y in range(REPRODUCTION_TIME_STEPS):
-                algorithm.replicator_equation(group)
-
-            # Returning progeny of group to population
-            if group[0]:
-                population['sl'] += group[1]
-                population['cl'] += group[2]
-            else:
-                population['ss'] += group[1]
-                population['cs'] += group[2]
-
-        print("# GENERATION {} #".format(i))
-        helper.rescale_population(population, print_population=False)
-        helper.print_genotype_distribution(population)
-        ssr, slr, csr, clr = helper.determine_genotype_distribution(population)
-        data = data.append({'generation': i, 'ss': ssr, 'sl': slr, 'cs': csr, 'cl': clr}, ignore_index=True)
-
+def genotype_freq_plot():
+    """
+    Creates the plot for genotype frequency
+    """
     ax = plt.gca()
     data.plot(kind='line', x='generation', y='cs', color='red', ax=ax)
     data.plot(kind='line', x='generation', y='cl', color='blue', ax=ax)
@@ -62,3 +44,34 @@ if __name__ == '__main__':
     plt.xlabel('Generation')
     plt.ylabel("Global Genotype Frequency")
     plt.show()
+
+
+if __name__ == '__main__':
+    pop = population.form_set_population()
+    print("# GENERATION 0 #")
+    population.print_genotype_distribution(pop)
+    ssr, slr, csr, clr = population.determine_genotype_distribution(pop)
+    data = data.append({'generation': 0, 'ss': ssr, 'sl': slr, 'cs': csr, 'cl': clr}, ignore_index=True)
+
+    for i in range(1, NUMBER_OF_GENERATIONS+1):
+        groups = population.form_groups(pop)
+
+        for group in groups:
+            for y in range(REPRODUCTION_TIME_STEPS):
+                algorithm.replicator_equation(group)
+
+            # Returning progeny of group to population
+            if group[0]:
+                pop['sl'] += group[1]
+                pop['cl'] += group[2]
+            else:
+                pop['ss'] += group[1]
+                pop['cs'] += group[2]
+
+        print("# GENERATION {} #".format(i))
+        population.rescale_population(pop, print_population=False)
+        population.print_genotype_distribution(pop)
+        ssr, slr, csr, clr = population.determine_genotype_distribution(pop)
+        data = data.append({'generation': i, 'ss': ssr, 'sl': slr, 'cs': csr, 'cl': clr}, ignore_index=True)
+
+    genotype_freq_plot()

@@ -1,3 +1,8 @@
+#################################################################################
+# File name: algorithm.py                                                       #
+# Description: Algorithms to describe population movement                       #
+#################################################################################
+
 from src import main
 
 
@@ -6,9 +11,8 @@ def resource_allocation(group):
     Calculates the magnitude of the resources which a genotype receives in a group
 
     :param ([Individual]) group: The group containing the genotypes
-    :param ([SelfishIndividual]) selfish: The selfish subgroup in a group
-    :param ([CooperativeIndividual]) cooperative: The cooperative subgroup in a group
-    :return:
+    :return (float) selfish_share: The share of resources in which the selfish genotypes receive
+    :return (float) cooperative_share: The share of resources in which the cooperative genotypes receive
     """
     selfish_number, cooperative_number = group[1], group[2]
 
@@ -47,8 +51,7 @@ def replicator_equation(group):
     """
     Replication equation which defines how groups replicate within
 
-
-    :return:
+    :param ([Individual]) group: The group which we are calculating the new size for after replication
     """
     number_selfish, number_cooperative = group[1], group[2]
 
@@ -57,10 +60,10 @@ def replicator_equation(group):
 
     # Calculating the new number of both selfish and cooperative genotypes in the group
     selfish_replication = number_selfish + (selfish_allocation / main.SELFISH_CONSUMPTION) - \
-                          (main.DEATH_RATE * number_selfish)
+        (main.DEATH_RATE * number_selfish)
 
     cooperative_replication = number_cooperative + (cooperative_allocation / main.COOPERATIVE_CONSUMPTION) - \
-                              (main.DEATH_RATE * number_cooperative)
+        (main.DEATH_RATE * number_cooperative)
 
     # Reforming group based on replications
     group[1] = selfish_replication
