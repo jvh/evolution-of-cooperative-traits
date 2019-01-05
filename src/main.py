@@ -1,6 +1,4 @@
-import formation
-import algorithm
-import helper
+from src import helper, algorithm, formation
 import pandas as pd
 import matplotlib.pyplot as plt
 

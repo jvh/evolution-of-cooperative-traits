@@ -1,4 +1,4 @@
-import main
+from src import main
 import random
 
 

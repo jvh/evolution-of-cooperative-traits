@@ -1,4 +1,4 @@
-import main
+from src import main
 
 
 def resource_allocation(group):
@@ -37,7 +37,7 @@ def resource_influx_calculation(group):
     """
     if group[0]:
         # If above base, we need to work out the additional resources, with SMALL_GROUP_SIZE*2 requiring 5% extra
-        additional_resources = (main.LARGE_GROUP_SIZE/(main.RESOURCE_INFLUX_BASE * 2) * 0.05)
+        additional_resources = (main.LARGE_GROUP_SIZE / (main.RESOURCE_INFLUX_BASE * 2) * 0.05)
         return main.LARGE_GROUP_SIZE * (1 + additional_resources)
     else:
         return main.RESOURCE_INFLUX_BASE
@@ -57,10 +57,10 @@ def replicator_equation(group):
 
     # Calculating the new number of both selfish and cooperative genotypes in the group
     selfish_replication = number_selfish + (selfish_allocation / main.SELFISH_CONSUMPTION) - \
-        (main.DEATH_RATE * number_selfish)
+                          (main.DEATH_RATE * number_selfish)
 
     cooperative_replication = number_cooperative + (cooperative_allocation / main.COOPERATIVE_CONSUMPTION) - \
-        (main.DEATH_RATE * number_cooperative)
+                              (main.DEATH_RATE * number_cooperative)
 
     # Reforming group based on replications
     group[1] = selfish_replication
