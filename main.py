@@ -51,14 +51,16 @@ if __name__ == '__main__':
         print("# GENERATION {} #".format(i))
         helper.rescale_population(population, i, data)
 
+    plt.ylim(0, 1)
+    plt.xlim(0, NUMBER_OF_GENERATIONS)
     ax = plt.gca()
+
     data.plot(kind='line', x='generation', y='cs', color='red', ax=ax)
     data.plot(kind='line', x='generation', y='cl', color='blue', ax=ax)
     data.plot(kind='line', x='generation', y='ss', color='green', ax=ax)
     data.plot(kind='line', x='generation', y='sl', color='black', ax=ax)
+
     plt.xlabel('Generation')
     plt.ylabel("Global Genotype Frequency")
 
-    plt.ylim(0, 1)
-    plt.xlim(0, NUMBER_OF_GENERATIONS)
     plt.show()
