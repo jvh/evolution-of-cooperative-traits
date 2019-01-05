@@ -1,9 +1,8 @@
 import formation
 import algorithm
-from random import shuffle
-
-# Specifies the size of the population
 import helper
+import pandas as pd
+import matplotlib.pyplot as plt
 
 POPULATION_SIZE = 4000
 # Number of generations, T, to take place in the simulation
@@ -19,19 +18,20 @@ SELFISH_CONSUMPTION = 0.2
 # Defining group sizes for large and small groups
 LARGE_GROUP_SIZE = 40
 SMALL_GROUP_SIZE = 4
-GROUP_SIZE_DICT = {True: 'large', False: 'small'}
 # Base resource influx is equal for a small group is equal to SMALL_GROUP_SIZE
 RESOURCE_INFLUX_BASE = SMALL_GROUP_SIZE
 # The t time-steps that reproduction takes places
 REPRODUCTION_TIME_STEPS = 4
 
-# The current generation
-generation_number = 0
+columns = ['generation', 'ss', 'sl', 'cs', 'cl']
+data = pd.DataFrame(columns=columns)
 
 if __name__ == '__main__':
     population = formation.form_set_population()
     print("# GENERATION 0 #")
-    helper.rescale_population(population)
+    helper.print_genotype_distribution(population)
+    ssr, slr, csr, clr = helper.determine_genotype_distribution(population)
+    data = data.append({'generation': 0, 'ss': ssr, 'sl': slr, 'cs': csr, 'cl': clr}, ignore_index=True)
 
     for i in range(1, NUMBER_OF_GENERATIONS+1):
         groups = formation.form_groups(population)
@@ -49,20 +49,18 @@ if __name__ == '__main__':
                 population['cs'] += group[2]
 
         print("# GENERATION {} #".format(i))
-        helper.rescale_population(population)
+        helper.rescale_population(population, print_population=False)
+        helper.print_genotype_distribution(population)
+        ssr, slr, csr, clr = helper.determine_genotype_distribution(population)
+        data = data.append({'generation': i, 'ss': ssr, 'sl': slr, 'cs': csr, 'cl': clr}, ignore_index=True)
 
-        # genotype_distribution = helper.determine_genotype_distribution(population)
-        #
-
-    #
-    #
-    #
-    # # print(len(population))
-    # # # print(population)
-    #
-    #
-    # print(i)
-
-    # print(len(groups))
-    #
-    # print(number_of_selfish)
+    ax = plt.gca()
+    data.plot(kind='line', x='generation', y='cs', color='red', ax=ax)
+    data.plot(kind='line', x='generation', y='cl', color='blue', ax=ax)
+    data.plot(kind='line', x='generation', y='ss', color='green', ax=ax)
+    data.plot(kind='line', x='generation', y='sl', color='black', ax=ax)
+    plt.ylim(0, 1)
+    plt.xlim(0, NUMBER_OF_GENERATIONS)
+    plt.xlabel('Generation')
+    plt.ylabel("Global Genotype Frequency")
+    plt.show()

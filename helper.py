@@ -1,5 +1,4 @@
-import main
-import formation
+import main as main
 
 
 def print_genotype_distribution(population):
@@ -10,14 +9,19 @@ def print_genotype_distribution(population):
     """
     total_size = population['ss'] + population['sl'] + population['cs'] + population['cl']
 
+    def into_percentage(num):
+        return num * 100 / total_size
+
     print("Small selfish: {ss}, with ratio {ssr}%\n"
           "Large selfish: {ls}, with ratio {lsr}%\n"
           "Small cooperative: {sc}, with ratio {scr}%\n"
-          "Large cooperative: {lc}, with ratio {lcr}%\n".
-          format(ss=population['ss'], ssr=population['ss']/total_size,
-                 ls=population['sl'], lsr=population['sl']/total_size,
-                 sc=population['cs'], scr=population['cs']/total_size,
-                 lc=population['cl'], lcr=population['cl']/total_size))
+          "Large cooperative: {lc}, with ratio {lcr}%\n"
+          "Total population size {total}\n".
+          format(ss=population['ss'], ssr=into_percentage(population['ss']),
+                 ls=population['sl'], lsr=into_percentage(population['sl']),
+                 sc=population['cs'], scr=into_percentage(population['cs']),
+                 lc=population['cl'], lcr=into_percentage(population['cl']),
+                 total=total_size))
 
 
 def determine_genotype_distribution(population):
@@ -27,7 +31,7 @@ def determine_genotype_distribution(population):
     :param ([Individual]) population: The population of individuals
     :return: Metrics regarding the distribution of genotypes
     """
-    total_size = population['ss'] + population['sl'] + population['cs'] + population['cl']
+    total_size = sum(x for x in population.values())
 
     small_selfish_ratio = population['ss'] / total_size
     large_selfish_ratio = population['sl'] / total_size
@@ -35,28 +39,6 @@ def determine_genotype_distribution(population):
     large_cooperative_ratio = population['cl'] / total_size
 
     return small_selfish_ratio, large_selfish_ratio, small_cooperative_ratio, large_cooperative_ratio
-
-
-# def split_group_into_genotype(group):
-#     """
-#     Splits a given group into subgroups of the constituent genotypes
-#
-#     :param ([Individual]) group: The group containing the genotypes
-#     :return:
-#     """
-#     group_elements = group[1]
-#
-#     # Splitting up genotypes
-#     if group[0]:
-#         # Large genotype
-#         selfish = [x for x in group_elements if isinstance(x, main.SelfishIndividual) and x.group_size]
-#         cooperative = [x for x in group_elements if isinstance(x, main.CooperativeIndividual) and x.group_size]
-#     else:
-#         selfish = [x for x in group_elements if isinstance(x, main.SelfishIndividual) and not x.group_size]
-#         cooperative = [x for x in group_elements if isinstance(x, main.CooperativeIndividual) and not
-#                        x.group_size]
-#
-#     return selfish, cooperative
 
 
 def rescale_population(population, print_population=True):
@@ -68,10 +50,13 @@ def rescale_population(population, print_population=True):
     # Ratios of genotypes
     ssr, slr, csr, clr = determine_genotype_distribution(population)
 
-    small_selfish_population = main.POPULATION_SIZE * ssr
-    large_selfish_population = main.POPULATION_SIZE * slr
-    small_cooperative_population = main.POPULATION_SIZE * csr
-    large_cooperative_population = main.POPULATION_SIZE * clr
+    # data = data.append({'Generation': data, 'ss': ssr, 'sl': slr, 'cs': csr,
+    #                 'cl': cl / POPULATION_SIZE}, ignore_index=True)
+
+    small_selfish_population = round(main.POPULATION_SIZE * ssr)
+    large_selfish_population = round(main.POPULATION_SIZE * slr)
+    small_cooperative_population = round(main.POPULATION_SIZE * csr)
+    large_cooperative_population = round(main.POPULATION_SIZE * clr)
 
     population['ss'] = small_selfish_population
     population['sl'] = large_selfish_population
@@ -81,5 +66,6 @@ def rescale_population(population, print_population=True):
     if print_population:
         print_genotype_distribution(population)
 
+    return small_selfish_population, large_selfish_population, small_cooperative_population, large_cooperative_population
 
 

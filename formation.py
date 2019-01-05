@@ -1,6 +1,7 @@
 import main
 import random
 
+
 def form_set_population():
     """
     Forms the initial population, 0.25 * POPULATION_SIZE of each genotype (selfish+small, selfish+large,
@@ -26,34 +27,30 @@ def form_groups(population):
     :param ([Individual]) population: The population list
     :return: ([[]]) A list of groups
     """
+    # for key, val in population.values():
+    small_pop_list = (int(population['ss']) * ['ss']) + (int(population['cs']) * ['cs'])
+    large_pop_list = (int(population['sl']) * ['sl']) + (int(population['cl']) * ['cl'])
+
+    random.shuffle(small_pop_list)
+    random.shuffle(large_pop_list)
+
     groups = []
-    small_pop = population['ss'] + population['cs']
-    large_pop = population['sl'] + population['cl']
 
-    # Forming small groups
-    while small_pop >= main.SMALL_GROUP_SIZE:
-        while True:
-            rand_selfish = random.randint(0, main.SMALL_GROUP_SIZE)
-            rand_cooperative = main.SMALL_GROUP_SIZE - rand_selfish
-            if rand_selfish <= population['ss'] and rand_cooperative <= population['cs']:
-                break
+    # Populates small populations
+    while len(small_pop_list) >= main.SMALL_GROUP_SIZE:
+        sublist = small_pop_list[:main.SMALL_GROUP_SIZE]
+        number_selfish = sublist.count('ss')
+        number_cooperative = sublist.count('cs')
+        groups.append([False, number_selfish, number_cooperative])
+        del small_pop_list[:main.SMALL_GROUP_SIZE]
 
-        groups.append([False, float(rand_selfish), float(rand_cooperative)])
-        population['ss'] -= rand_selfish
-        population['cs'] -= rand_cooperative
-        small_pop -= main.SMALL_GROUP_SIZE
-
-    while large_pop >= main.LARGE_GROUP_SIZE:
-        while True:
-            rand_selfish = random.randint(0, main.LARGE_GROUP_SIZE)
-            rand_cooperative = main.LARGE_GROUP_SIZE - rand_selfish
-            if rand_selfish <= population['sl'] and rand_cooperative <= population['cl']:
-                break
-
-        groups.append([True, float(rand_selfish), float(rand_cooperative)])
-        population['sl'] -= rand_selfish
-        population['cl'] -= rand_cooperative
-        large_pop -= main.LARGE_GROUP_SIZE
+    # Populates large groups
+    while len(large_pop_list) >= main.LARGE_GROUP_SIZE:
+        sublist = large_pop_list[:main.LARGE_GROUP_SIZE]
+        number_selfish = sublist.count('sl')
+        number_cooperative = sublist.count('cl')
+        groups.append([True, number_selfish, number_cooperative])
+        del large_pop_list[:main.LARGE_GROUP_SIZE]
 
     # Dispose of any members who don't fit into group
     population['ss'] = population['cs'] = population['sl'] = population['cl'] = 0
