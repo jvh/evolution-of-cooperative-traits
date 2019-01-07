@@ -118,10 +118,10 @@ def rescale_population(population, print_population=True):
     # Ratios of genotypes
     ssr, slr, csr, clr = determine_genotype_distribution(population)
 
-    small_selfish_population = round(main.POPULATION_SIZE * ssr)
-    large_selfish_population = round(main.POPULATION_SIZE * slr)
-    small_cooperative_population = round(main.POPULATION_SIZE * csr)
-    large_cooperative_population = round(main.POPULATION_SIZE * clr)
+    small_selfish_population = main.POPULATION_SIZE * ssr
+    large_selfish_population = main.POPULATION_SIZE * slr
+    small_cooperative_population = main.POPULATION_SIZE * csr
+    large_cooperative_population = main.POPULATION_SIZE * clr
 
     population['ss'] = small_selfish_population
     population['sl'] = large_selfish_population
