@@ -46,7 +46,9 @@ def genotype_freq_plot():
     plt.show()
 
 
-if __name__ == '__main__':
+def run():
+    global data
+
     pop = population.form_set_population()
     print("# GENERATION 0 #")
     population.print_genotype_distribution(pop)
@@ -75,3 +77,7 @@ if __name__ == '__main__':
         data = data.append({'generation': i, 'ss': ssr, 'sl': slr, 'cs': csr, 'cl': clr}, ignore_index=True)
 
     genotype_freq_plot()
+
+
+if __name__ == '__main__':
+    run()
