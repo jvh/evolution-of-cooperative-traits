@@ -14,11 +14,12 @@ def resource_allocation(group):
     :return (float) selfish_share: The share of resources in which the selfish genotypes receive
     :return (float) cooperative_share: The share of resources in which the cooperative genotypes receive
     """
-    selfish_number, cooperative_number = group[1], group[2]
+    number_selfish = len([x for x in group if x.selfish])
+    number_cooperative = len([x for x in group if not x.selfish])
 
     # Top line of equation == number_in_group * growth_rate * consumption_rate
-    selfish_top_line = selfish_number * main.SELFISH_GROWTH * main.SELFISH_CONSUMPTION
-    cooperative_top_line = cooperative_number * main.COOPERATIVE_GROWTH * main.COOPERATIVE_CONSUMPTION
+    selfish_top_line = number_selfish * main.SELFISH_GROWTH * main.SELFISH_CONSUMPTION
+    cooperative_top_line = number_cooperative * main.COOPERATIVE_GROWTH * main.COOPERATIVE_CONSUMPTION
 
     # Bottom line of equation == sum of all top lines
     bottom_line = selfish_top_line + cooperative_top_line
@@ -53,7 +54,16 @@ def replicator_equation(group):
 
     :param ([Individual]) group: The group which we are calculating the new size for after replication
     """
-    number_selfish, number_cooperative = group[1], group[2]
+    group_pop = group[1]
+    selfish = [x for x in group_pop if x.selfish]
+    cooperative = [x for x in group if not x.selfish]
+    number_selfish = len(selfish)
+    number_cooperative = len(cooperative)
+
+    # Set of families
+    families = {x.family_id for x in group_pop}
+    number_families = len(families)
+
 
     # Working out the resource allocations for each genotype in the group
     selfish_allocation, cooperative_allocation = resource_allocation(group)
@@ -65,6 +75,16 @@ def replicator_equation(group):
     cooperative_replication = number_cooperative + (cooperative_allocation / main.COOPERATIVE_CONSUMPTION) - \
         (main.DEATH_RATE * number_cooperative)
 
-    # Reforming group based on replications
-    group[1] = selfish_replication
-    group[2] = cooperative_replication
+    new_number_selfish = selfish_replication - number_selfish
+    new_number_cooperative = cooperative_replication - number_cooperative
+
+    if new_number_selfish > 0:
+        # For each family, give proportionate
+        new_selfish =2
+
+
+        # Reforming group based on replications
+    # group[1] = selfish_replication
+    # group[2] = cooperative_replication
+
+    group[1] = selfish +2
