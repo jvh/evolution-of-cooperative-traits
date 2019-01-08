@@ -55,11 +55,19 @@ def run():
     ssr, slr, csr, clr = population.determine_genotype_distribution(pop)
     data = data.append({'generation': 0, 'ss': ssr, 'sl': slr, 'cs': csr, 'cl': clr}, ignore_index=True)
 
+    # The family proportions
+    ss_family_proportions = {}
+    sl_family_proportions = {}
+    cs_family_proportions = {}
+    cl_family_proportions = {}
+
     for i in range(1, NUMBER_OF_GENERATIONS+1):
         if i == 1:
-            groups = population.form_groups(pop, first_time=True)
+            groups = population.form_groups(pop, ss_family_proportions, sl_family_proportions,
+                                            cs_family_proportions, cl_family_proportions, first_time=True)
         else:
-            groups = population.form_groups(pop)
+            groups = population.form_groups(pop, ss_family_proportions, sl_family_proportions,
+                                            cs_family_proportions, cl_family_proportions)
 
         for group in groups:
             for y in range(REPRODUCTION_TIME_STEPS):
@@ -69,9 +77,38 @@ def run():
             if group[0]:
                 pop['sl'] += len(group[1]) + group[2]
                 pop['cl'] += len(group[3]) + group[4]
+
+                for member in (group[1]):
+                    family_id = member.get_family_id()
+                    if family_id in sl_family_proportions:
+                        sl_family_proportions[family_id] += 1
+                    else:
+                        sl_family_proportions[family_id] = 1
+
+                for member in (group[3]):
+                    family_id = member.get_family_id()
+                    if family_id in cl_family_proportions:
+                        cl_family_proportions[family_id] += 1
+                    else:
+                        cl_family_proportions[family_id] = 1
+
             else:
                 pop['ss'] += len(group[1]) + group[2]
                 pop['cs'] += len(group[3]) + group[4]
+
+                for member in (group[1]):
+                    family_id = member.get_family_id()
+                    if family_id in ss_family_proportions:
+                        ss_family_proportions[family_id] += 1
+                    else:
+                        ss_family_proportions[family_id] = 1
+
+                for member in (group[3]):
+                    family_id = member.get_family_id()
+                    if family_id in cl_family_proportions:
+                        cs_family_proportions[family_id] += 1
+                    else:
+                        cs_family_proportions[family_id] = 1
 
         print("# GENERATION {} #".format(i))
         population.rescale_population(pop, print_population=False)

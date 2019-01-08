@@ -26,6 +26,7 @@ class Individual:
     def get_selfish(self):
         return self.selfish
 
+
 def form_set_population():
     """
     Forms the initial population, 0.25 * POPULATION_SIZE of each genotype (selfish+small, selfish+large,
@@ -70,11 +71,13 @@ def proportion_for_families(families, new_number, old_number):
 
     return member_distribution
 
-def form_groups(population, first_time = False):
+def form_groups(population, ss_family_proportions, sl_family_proportions,
+                                            cs_family_proportions, cl_family_proportions, first_time = False):
     """
     Breaks the population into groups
 
     :param ([Individual]) population: The population list
+    :param family_proportions: The proportion of families being made up
     :return: ([[]]) A list of groups
     """
     if first_time:
@@ -95,11 +98,33 @@ def form_groups(population, first_time = False):
             large_pop_list += [Individual(i + current_num, False, True)]
             current_num += 1
     else:
+        total_ss_family_members = sum(x for x in ss_family_proportions.values())
+        total_sl_family_members = sum(x for x in sl_family_proportions.values())
+        total_cs_family_members = sum(x for x in cs_family_proportions.values())
+        total_cl_family_members = sum(x for x in cl_family_proportions.values())
+
+        total = total_ss_family_members + total_sl_family_members + total_cs_family_members + total_cl_family_members
+
+        # for f in family_proportions:
+        #     family_proportions[f] = family_proportions[f] / total_family_members
+
+        # Working out proportion for each family
+        for ss_mem in ss_family_proportions:
+            ss_family_proportions[ss_mem] = ss_family_proportions[ss_mem] / total
+        for sl_mem in sl_family_proportions:
+            sl_family_proportions[sl_mem] = sl_family_proportions[sl_mem] / total
+        for cs_mem in cs_family_proportions:
+            cs_family_proportions[cs_mem] = cs_family_proportions[cs_mem] / total
+        for cl_mem in cl_family_proportions:
+            cl_family_proportions[cl_mem] = cl_family_proportions[cl_mem] / total
+
         small_pop_list = (int(population['ss']) * [Individual(-1, True, False)]) + \
                          (int(population['cs']) * [Individual(-1, False, False)])
 
         large_pop_list = (int(population['sl']) * [Individual(-1, True, True)]) + \
                          (int(population['cl']) * [Individual(-1, False, True)])
+
+        family_proportions = {}
 
     random.shuffle(small_pop_list)
     random.shuffle(large_pop_list)
