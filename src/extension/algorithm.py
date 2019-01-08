@@ -3,7 +3,7 @@
 # Description: Algorithms to describe population movement                       #
 #################################################################################
 
-from src.extension import main
+from src.extension import main, population
 
 
 def resource_allocation(group):
@@ -14,8 +14,8 @@ def resource_allocation(group):
     :return (float) selfish_share: The share of resources in which the selfish genotypes receive
     :return (float) cooperative_share: The share of resources in which the cooperative genotypes receive
     """
-    number_selfish = len([x for x in group if x.selfish])
-    number_cooperative = len([x for x in group if not x.selfish])
+    number_selfish = len(group[1]) + group[2]
+    number_cooperative = len(group[3]) + group[4]
 
     # Top line of equation == number_in_group * growth_rate * consumption_rate
     selfish_top_line = number_selfish * main.SELFISH_GROWTH * main.SELFISH_CONSUMPTION
@@ -54,16 +54,18 @@ def replicator_equation(group):
 
     :param ([Individual]) group: The group which we are calculating the new size for after replication
     """
-    group_pop = group[1]
-    selfish = [x for x in group_pop if x.selfish]
-    cooperative = [x for x in group if not x.selfish]
-    number_selfish = len(selfish)
-    number_cooperative = len(cooperative)
+    selfish = group[1]
+    selfish_extra = group[2]
+    cooperative = group[3]
+    cooperative_extra = group[4]
+    group_pop = selfish + cooperative
+
+    number_selfish = len(selfish) + selfish_extra
+    number_cooperative = len(cooperative) + cooperative_extra
 
     # Set of families
     families = {x.family_id for x in group_pop}
     number_families = len(families)
-
 
     # Working out the resource allocations for each genotype in the group
     selfish_allocation, cooperative_allocation = resource_allocation(group)
@@ -75,16 +77,26 @@ def replicator_equation(group):
     cooperative_replication = number_cooperative + (cooperative_allocation / main.COOPERATIVE_CONSUMPTION) - \
         (main.DEATH_RATE * number_cooperative)
 
-    new_number_selfish = selfish_replication - number_selfish
-    new_number_cooperative = cooperative_replication - number_cooperative
+    new_number_selfish = int(selfish_replication) - int(number_selfish)
+    new_number_cooperative = int(cooperative_replication) - int(number_cooperative)
 
-    if new_number_selfish > 0:
-        # For each family, give proportionate
-        new_selfish =2
+    remaining = selfish_replication - int(selfish_replication)
+    group[2] = remaining
+    new_selfish = [population.Individual(-1, True, group[0])] * int(new_number_selfish)
+    selfish += new_selfish
 
+
+    # For each family, give proportionate
+
+    remaining = cooperative_replication - int(cooperative_replication)
+    group[4] = remaining
+
+    new_cooperative = [population.Individual(-1, False, group[0])] * int(new_number_cooperative)
+    cooperative += new_cooperative
 
         # Reforming group based on replications
     # group[1] = selfish_replication
     # group[2] = cooperative_replication
 
-    group[1] = selfish +2
+    group[1] = selfish
+    group[3] = cooperative

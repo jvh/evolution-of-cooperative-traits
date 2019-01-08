@@ -64,11 +64,11 @@ def run():
 
             # Returning progeny of group to population
             if group[0]:
-                pop['sl'] += group[1]
-                pop['cl'] += group[2]
+                pop['sl'] += len(group[1]) + group[2]
+                pop['cl'] += len(group[3]) + group[4]
             else:
-                pop['ss'] += group[1]
-                pop['cs'] += group[2]
+                pop['ss'] += len(group[1]) + group[2]
+                pop['cs'] += len(group[3]) + group[4]
 
         print("# GENERATION {} #".format(i))
         population.rescale_population(pop, print_population=False)

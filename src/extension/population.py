@@ -57,17 +57,19 @@ def form_groups(population):
     # Populates small populations
     while len(small_pop_list) >= main.SMALL_GROUP_SIZE:
         sublist = small_pop_list[:main.SMALL_GROUP_SIZE]
-        # number_selfish = [x for x in sublist if x.selfish]
-        # number_cooperative = len([x for x in sublist if not x.selfish])
-        groups.append([False, sublist])
+        selfish = [x for x in sublist if x.selfish]
+        cooperative = [x for x in sublist if not x.selfish]
+        # The 2nd and 4th index specify the amount extra after rounding has taken place such that rounding doesn't
+        # influence the results
+        groups.append([False, selfish, 0, cooperative, 0])
         del small_pop_list[:main.SMALL_GROUP_SIZE]
 
     # Populates large groups
     while len(large_pop_list) >= main.LARGE_GROUP_SIZE:
         sublist = large_pop_list[:main.LARGE_GROUP_SIZE]
-        # number_selfish = len([x for x in sublist if x.selfish])
-        # number_cooperative = len([x for x in sublist if not x.selfish])
-        groups.append([True, sublist])
+        selfish = [x for x in sublist if x.selfish]
+        cooperative = [x for x in sublist if not x.selfish]
+        groups.append([True, selfish, 0, cooperative, 0])
         del large_pop_list[:main.LARGE_GROUP_SIZE]
 
     # Dispose of any members who don't fit into group
