@@ -56,7 +56,10 @@ def run():
     data = data.append({'generation': 0, 'ss': ssr, 'sl': slr, 'cs': csr, 'cl': clr}, ignore_index=True)
 
     for i in range(1, NUMBER_OF_GENERATIONS+1):
-        groups = population.form_groups(pop)
+        if i == 1:
+            groups = population.form_groups(pop, first_time=True)
+        else:
+            groups = population.form_groups(pop)
 
         for group in groups:
             for y in range(REPRODUCTION_TIME_STEPS):

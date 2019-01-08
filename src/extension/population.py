@@ -17,6 +17,14 @@ class Individual:
         self.selfish = selfish
         self.group_size = group_size
 
+    def set_family_id(self, family_id):\
+        self.family_id = family_id
+
+    def get_family_id(self):
+        return self.family_id
+
+    def get_selfish(self):
+        return self.selfish
 
 def form_set_population():
     """
@@ -35,19 +43,63 @@ def form_set_population():
 
     return population
 
+def proportion_for_families(families, new_number, old_number):
+    """
 
-def form_groups(population):
+    :param families: The families of a certain genotype (either selfish or cooperative)
+    :param new_number: The new number of individuals created
+    :param old_number: The original number of individuals before reproduction
+    :return:
+    """
+    member_distribution = {}
+
+    for f in families:
+        # Proportion of family, f
+        member_distribution[f] = families[f] / old_number
+
+    total = 0
+    for f in member_distribution:
+        proportion = int(member_distribution[f] * new_number)
+        total += proportion
+        member_distribution[f] = proportion
+
+    # Randomly distribute any remaining
+    while total != new_number:
+        member_distribution[random.choice(list(member_distribution.keys()))] += 1
+        total += 1
+
+    return member_distribution
+
+def form_groups(population, first_time = False):
     """
     Breaks the population into groups
 
     :param ([Individual]) population: The population list
     :return: ([[]]) A list of groups
     """
-    small_pop_list = (int(population['ss']) * [Individual(-1, True, False)]) + \
-                     (int(population['cs']) * [Individual(-1, False, False)])
+    if first_time:
+        small_pop_list = []
+        large_pop_list = []
 
-    large_pop_list = (int(population['sl']) * [Individual(-1, True, True)]) + \
-                     (int(population['cl']) * [Individual(-1, False, True)])
+        current_num = 0
+        for i in range(int(population['ss'])):
+            small_pop_list += [Individual(i, True, False)]
+            current_num += 1
+        for i in range(int(population['cs'])):
+            small_pop_list += [Individual(i + current_num, False, False)]
+            current_num += 1
+        for i in range(int(population['sl'])):
+            large_pop_list += [Individual(i + current_num, True, True)]
+            current_num += 1
+        for i in range(int(population['cl'])):
+            large_pop_list += [Individual(i + current_num, False, True)]
+            current_num += 1
+    else:
+        small_pop_list = (int(population['ss']) * [Individual(-1, True, False)]) + \
+                         (int(population['cs']) * [Individual(-1, False, False)])
+
+        large_pop_list = (int(population['sl']) * [Individual(-1, True, True)]) + \
+                         (int(population['cl']) * [Individual(-1, False, True)])
 
     random.shuffle(small_pop_list)
     random.shuffle(large_pop_list)

@@ -59,13 +59,32 @@ def replicator_equation(group):
     cooperative = group[3]
     cooperative_extra = group[4]
     group_pop = selfish + cooperative
+    group_individuals = group[1] + group[3]
 
     number_selfish = len(selfish) + selfish_extra
     number_cooperative = len(cooperative) + cooperative_extra
 
     # Set of families
-    families = {x.family_id for x in group_pop}
-    number_families = len(families)
+    # families = {x.family_id for x in group_pop}
+    number_members_selfish_families = {}
+    number_members_cooperative_families = {}
+
+    for ind in group_individuals:
+        family_id = ind.get_family_id()
+        s = ind.get_selfish()
+        if s:
+            if family_id in number_members_selfish_families:
+                number_members_selfish_families[family_id] += 1
+            else:
+                number_members_selfish_families[family_id] = 1
+        else:
+            if family_id in number_members_cooperative_families:
+                number_members_cooperative_families[family_id] += 1
+            else:
+                number_members_cooperative_families[family_id] = 1
+    # for f in families:
+
+    # number_families = len(families)
 
     # Working out the resource allocations for each genotype in the group
     selfish_allocation, cooperative_allocation = resource_allocation(group)
@@ -82,17 +101,31 @@ def replicator_equation(group):
 
     remaining = selfish_replication - int(selfish_replication)
     group[2] = remaining
-    new_selfish = [population.Individual(-1, True, group[0])] * int(new_number_selfish)
-    selfish += new_selfish
+
+    selfish_distribution = population.proportion_for_families(number_members_selfish_families, new_number_selfish,
+                                                              len(selfish))
+
+    for fam, amount in selfish_distribution.items():
+        new_selfish = [population.Individual(fam, True, group[0])] * amount
+        selfish += new_selfish
+
+    # new_selfish = [population.Individual(-1, True, group[0])] * int(new_number_selfish)
+    # selfish += new_selfish
 
 
     # For each family, give proportionate
 
+    cooperative_distribution = population.proportion_for_families(number_members_cooperative_families,
+                                                                  new_number_cooperative, len(cooperative))
+    for fam, amount in cooperative_distribution.items():
+        new_cooperative = [population.Individual(fam, False, group[0])] * amount
+        cooperative += new_cooperative
+
     remaining = cooperative_replication - int(cooperative_replication)
     group[4] = remaining
 
-    new_cooperative = [population.Individual(-1, False, group[0])] * int(new_number_cooperative)
-    cooperative += new_cooperative
+    # new_cooperative = [population.Individual(-1, False, group[0])] * int(new_number_cooperative)
+    # cooperative += new_cooperative
 
         # Reforming group based on replications
     # group[1] = selfish_replication
