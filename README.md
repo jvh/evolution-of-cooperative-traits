@@ -11,6 +11,8 @@ Explores the conditions in which cooperation wins over selfish genotypes in a gi
 
 This algorithm presents a reimplementation of model outlined in [Powers, S. T., Penn, A. S. and Watson, R. A. (2007) Individual Selection for Cooperative Group Formation](https://link.springer.com/chapter/10.1007/978-3-540-74913-4_59).
 
+In addition to the algorithm presented in this repository, a visual representation of the population is represented using pyplot. This graphing covers 2 topics, the first being the change in frequency of genotypes over each generation, and the other being the frequency of unfavourable characteristics (in this model these are a large group size and selfish characteristics) over each generation.
+
 ## Usage Instructions
 
 These commands should both be ran in the **top-level** directory of the repository.
