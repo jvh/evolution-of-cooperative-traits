@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 
 
 if __name__ == '__main__':
-    # Plot Figure 2 right
-    with open("figure2right.txt") as f:
+    # Plot Figure right
+    with open("figure_right.txt") as f:
         data = f.read()
 
     data = data.split('\n')
@@ -31,8 +31,8 @@ if __name__ == '__main__':
     plt.xlim(0, 120)
     plt.show()
 
-    # Plot Figure 2 left
-    with open("figure2left.txt") as f2:
+    # Plot Figure left
+    with open("figure_left.txt") as f2:
         data = f2.read()
 
     data = data.split('\n')
