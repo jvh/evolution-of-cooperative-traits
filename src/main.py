@@ -1,5 +1,5 @@
 #####################################################################################
-# File: main.py                                                                     #
+# File: src/main.py                                                                 #
 # Description: The main features of the programme, including the broad steps taken  #
 #              during the algorithm.                                                #
 #####################################################################################
@@ -182,12 +182,12 @@ def rescale():
 
 if __name__ == '__main__':
     # Open files
-    file = open("figure_right.txt", "w")
-    file2 = open("figure_left.txt", "w")
+    fig_genotype_freq = open("figure_genotype_freq.txt", "w")
+    fig_unfavourable_traits = open("figure_unfavourable_traits.txt", "w")
 
     # Initialisation
     make_population()
-    func.print_population(file, file2)
+    func.print_population(fig_genotype_freq, fig_unfavourable_traits)
 
     for i in range(1, T + 1):
         # Aggregation
@@ -209,8 +209,8 @@ if __name__ == '__main__':
         rescale()
 
         print()
-        func.print_population(file, file2, i)
+        func.print_population(fig_genotype_freq, fig_unfavourable_traits, i)
 
     # Close files
-    file.close()
-    file2.close()
+    fig_genotype_freq.close()
+    fig_unfavourable_traits.close()

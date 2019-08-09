@@ -1,13 +1,19 @@
+#####################################################################################
+# File: src/helper_functions.py                                                     #
+# Description: Functions which are non-essential to the algorithm itself and serve  #
+#              primarily for user friendliness.                                     #
+#####################################################################################
+
 from src import T
 from src import pop
 
 
-def print_population(fig_left, fig_right, generation=0):
+def print_population(fig_unfavourable_traits, fig_genotype_freq, generation=0):
     """
     Print results to console and to file
 
-    :param (TextIO) fig_left: results for figure right
-    :param (TextIO) fig_right: results for figure left
+    :param (TextIO) fig_unfavourable_traits: results for figure right
+    :param (TextIO) fig_genotype_freq: results for figure left
     :param (int) generation: current generation
     """
     print(pop)
@@ -21,22 +27,26 @@ def print_population(fig_left, fig_right, generation=0):
 
     # Formatting files such that if we haven't reached the terminal generation we insert a new line
     if generation < T:
-        fig_left.write('{},{},{},{},{}\n'.format(generation,
-                                                 float(pop['coop_small'] / total),
-                                                 float(pop['coop_large'] / total),
-                                                 float(pop['selfish_small']/total),
-                                                 float(pop['selfish_large']/total)))
-        fig_right.write('{},{},{}\n'.format(generation,
-                                            float(pop['selfish_large'] / total) + float(pop['coop_large'] / total),
-                                            float(pop['selfish_large']/total) + float(pop['selfish_small']/total)))
+        fig_unfavourable_traits.write('{},{},{},{},{}\n'.format(generation,
+                                                                float(pop['coop_small'] / total),
+                                                                float(pop['coop_large'] / total),
+                                                                float(pop['selfish_small']/total),
+                                                                float(pop['selfish_large']/total)))
+        fig_genotype_freq.write('{},{},{}\n'.format(generation,
+                                                    float(pop['selfish_large'] / total) +
+                                                    float(pop['coop_large'] / total),
+                                                    float(pop['selfish_large']/total) +
+                                                    float(pop['selfish_small']/total)))
     else:
-        fig_left.write('{},{},{},{},{}'.format(generation, float(pop['coop_small'] / total),
-                                               float(pop['coop_large'] / total),
-                                               float(pop['selfish_small']/total),
-                                               float(pop['selfish_large']/total)))
-        fig_right.write('{},{},{}'.format(generation,
-                                          float(pop['selfish_large'] / total) + float(pop['coop_large'] / total),
-                                          float(pop['selfish_large']/total) + float(pop['selfish_small']/total)))
+        fig_unfavourable_traits.write('{},{},{},{},{}'.format(generation, float(pop['coop_small'] / total),
+                                                              float(pop['coop_large'] / total),
+                                                              float(pop['selfish_small']/total),
+                                                              float(pop['selfish_large']/total)))
+        fig_genotype_freq.write('{},{},{}'.format(generation,
+                                                  float(pop['selfish_large'] / total) +
+                                                  float(pop['coop_large'] / total),
+                                                  float(pop['selfish_large']/total) +
+                                                  float(pop['selfish_small']/total)))
 
 
 def get_pop_total():

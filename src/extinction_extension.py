@@ -1,3 +1,12 @@
+#####################################################################################
+# File: src/extinction_event.py                                                     #
+# Description: Includes the functions necessary for the extinction and migration    #
+#              extension to this piece of work. This is intended to simulate        #
+#              extinction events which could effectively destroy groups of          #
+#              individuals and the migration of other groups to fill the resource   #
+#              void.                                                                #
+#####################################################################################
+
 import random
 
 from src import EXTINCTION_PROBABILITY
