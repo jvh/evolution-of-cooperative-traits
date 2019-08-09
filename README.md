@@ -2,6 +2,13 @@
 
 Explores the conditions in which cooperation wins over selfish genotypes in a given population. In this model, 4 genotypes exist -- large and small group sizes (40 and 4 initial starting size respectively) with each of these being filled with a even mix of cooperative and selfish individuals. My findings show that, given an even distribution of genotypes upon initialisation, small-cooperative groups win out.
 
+5 basic steps are taken during the algorithm to allow for generations within the population:
+1) Making the population.
+2) Forming the groups (aggregation).
+3) Reproduction.
+4) Dispersal of progreny to migrant pool.
+5) Rescaling migrant pool to global maximum in order to reflect distribution of types.
+
 This algorithm presents a reimplementation of model outlined in [Powers, S. T., Penn, A. S. and Watson, R. A. (2007) Individual Selection for Cooperative Group Formation](https://link.springer.com/chapter/10.1007/978-3-540-74913-4_59).
 
 ## Usage Instructions
