@@ -2,7 +2,24 @@
 
 Explores the conditions in which cooperation wins over selfish genotypes in a given population. In this model, 4 genotypes exist -- large and small group sizes (40 and 4 initial starting size respectively) with each of these being filled with a even mix of cooperative and selfish individuals. My findings show that, given an even distribution of genotypes upon initialisation, small-cooperative groups win out.
 
-This algorithm presents a reimplementation of model outlined in Powers, S. T., Penn, A. S. and Watson, R. A. (2007) Individual Selection for Cooperative Group Formation.
+This algorithm presents a reimplementation of model outlined in [Powers, S. T., Penn, A. S. and Watson, R. A. (2007) Individual Selection for Cooperative Group Formation](https://link.springer.com/chapter/10.1007/978-3-540-74913-4_59).
+
+## Usage Instructions
+
+These commands should both be ran in the **top-level** directory of the repository.
+
+### Prerequisites
+
+Install [python3](https://www.python.org/download/releases/3.0/).
+
+Run command `pip install -r src/requirements.txt` in order to install package requirements.
+
+### Commands
+
+Note: You must run the genetic algorithm _before_ graphing.
+
+* Genetic algorithm: `python src/main.py`.
+* Graphing: `python src/plot_graphs.py`.
 
 ## Extensions
 
